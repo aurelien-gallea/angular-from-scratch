@@ -1,33 +1,32 @@
+import { Formatter } from './../services/Formatter';
+
 export class PhoneNumberDirective {
-  static selector = "[phone-number]";
+    static selector = "[phone-number]";
 
-  willHaveSpaces = true;
+    willHaveSpaces = true;
+    borderColor = "red";
 
-  constructor(public element: HTMLElement) {}
 
-  formatPhoneNumber(element: HTMLInputElement) {
-    const value = element.value.replace(/[^\d+]/g, "").substring(0, 10);
-
-    const groups: string[] = [];
-
-    for (let i = 0; i < value.length; i += 2) {
-      groups.push(value.substring(i, i + 2));
+    constructor(public element: HTMLElement, private formatter : Formatter) {
     }
 
-    element.value = groups.join(" ");
-    console.log(groups);
-  }
-
-  init() {
-    this.element.style.borderColor = "red";
-
-    if(this.element.hasAttribute("with-spaces")) {
-        this.willHaveSpaces = this.element.getAttribute('with-spaces');
-        // 47.15
+    formatPhoneNumber(element: HTMLInputElement) {
+        element.value = this.formatter.formatNumber(element.value, 10, 2, this.willHaveSpaces);
     }
 
-    this.element.addEventListener("input", (event) => {
-      this.formatPhoneNumber(event.target as HTMLInputElement);
-    });
-  }
+    init() {
+        
+        if (this.element.hasAttribute("with-spaces")) {
+            this.willHaveSpaces = this.element.getAttribute("with-spaces") === "true";
+        }
+        
+        if (this.element.hasAttribute("border-color")) {
+            this.borderColor = this.element.getAttribute("border-color")! ;
+        }
+        this.element.style.borderColor = this.borderColor;
+
+        this.element.addEventListener("input", (event) => {
+            this.formatPhoneNumber(event.target as HTMLInputElement);
+        });
+    }
 }
