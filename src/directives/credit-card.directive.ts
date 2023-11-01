@@ -1,19 +1,14 @@
+import { Formatter } from './../services/Formatter';
+
 export class CreditCardDirective {
     static selector = "[credit-card]";
-  
-    constructor(public element: HTMLElement) {}
-  
+ 
+    constructor(public element: HTMLElement, private formatter : Formatter) {
+    }
+
     formatCreditCardNumber(element: HTMLInputElement) {
-      const value = element.value.replace(/[^\d+]/g, "").substring(0, 16);
-  
-      const groups: string[] = [];
-  
-      for (let i = 0; i < value.length; i += 4) {
-        groups.push(value.substring(i, i + 4));
-      }
-  
-      element.value = groups.join(" ");
-      console.log(groups);
+      
+      element.value = this.formatter.formatNumber(element.value, 16, 4, true);
     }
   
     init() {
@@ -23,3 +18,4 @@ export class CreditCardDirective {
       });
     }
   }
+  // 1.03.53
