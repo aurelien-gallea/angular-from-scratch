@@ -1,9 +1,9 @@
 export class Formatter {
     static id = 0;
 
-    constructor() {
+    constructor(name : string) {
         const id = Formatter.id++ ;
-        console.log("Je suis le formatteur n°" + id);
+        console.log("Je suis le formatteur " + name);
         
     }
     formatNumber(initialValue: string, length: number, groupLenght: number, willHaveSpaces = true) {

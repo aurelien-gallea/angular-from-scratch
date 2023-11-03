@@ -1,21 +1,20 @@
-import { Formatter } from './../services/Formatter';
+import { HostBinding } from "../decorators/HostBinding";
+import { HostListener } from "../decorators/HostListener";
+import { Directive } from "../decorators/directive";
+import { CreditCardVerifier } from "../services/CreditCardVerifier";
+import { Formatter } from "./../services/Formatter";
 
+@Directive({
+    selector: "[credit-card]",
+})
 export class CreditCardDirective {
-    static selector = "[credit-card]";
- 
-    constructor(public element: HTMLElement, private formatter : Formatter) {
-    }
+    @HostBinding("style.borderColor")
+    borderColor = "blue";
 
+    constructor(public element: HTMLElement, private formatter: Formatter, private verifier: CreditCardVerifier) {}
+
+    @HostListener('input', ["event.target"])
     formatCreditCardNumber(element: HTMLInputElement) {
-      
-      element.value = this.formatter.formatNumber(element.value, 16, 4, true);
+        element.value = this.formatter.formatNumber(element.value, 16, 4, true);
     }
-  
-    init() {
-      this.element.style.borderColor = "blue";
-      this.element.addEventListener("input", (event) => {
-        this.formatCreditCardNumber(event.target as HTMLInputElement);
-      });
-    }
-  }
-  // 1.03.53
+}

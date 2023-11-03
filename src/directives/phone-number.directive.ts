@@ -1,32 +1,51 @@
-import { Formatter } from './../services/Formatter';
+import { HostBinding } from "../decorators/HostBinding";
+import { HostListener } from "../decorators/HostListener";
+import { Directive } from "../decorators/directive";
+import { Input } from "../decorators/input";
+import { Detector } from "../framework/ChangeDetector";
+import { Formatter } from "./../services/Formatter";
 
+@Directive({
+    selector: "[phone-number]",
+    providers: [
+        {
+            provide: "formatter",
+            construct: () => new Formatter("spécifique"),
+        },
+    ],
+})
 export class PhoneNumberDirective {
-    static selector = "[phone-number]";
+    
 
+    @Input("with-spaces")
     willHaveSpaces = true;
+
+    @HostBinding("value")
+    value = "";
+
+    @Input("border-color")
+    @HostBinding("style.borderColor")
     borderColor = "red";
 
+    @HostBinding("placeholder")
+    placeholderText = "Hello World";
 
-    constructor(public element: HTMLElement, private formatter : Formatter) {
+    @HostListener("click")
+    onClick() {
+        this.placeholderText = "lire";
+        this.placeholderText = "2";
+        this.borderColor = "blue";
+        this.borderColor = "red";
+        this.placeholderText = "3";
+
+        Detector.digest();
+    }
+    constructor(public element: HTMLElement, private formatter: Formatter) {}
+
+    @HostListener("input", ["event.target.value"])
+    formatPhoneNumber(value: string) {
+        this.value = this.formatter.formatNumber(value, 10, 2, this.willHaveSpaces);
+        Detector.digest();
     }
 
-    formatPhoneNumber(element: HTMLInputElement) {
-        element.value = this.formatter.formatNumber(element.value, 10, 2, this.willHaveSpaces);
-    }
-
-    init() {
-        
-        if (this.element.hasAttribute("with-spaces")) {
-            this.willHaveSpaces = this.element.getAttribute("with-spaces") === "true";
-        }
-        
-        if (this.element.hasAttribute("border-color")) {
-            this.borderColor = this.element.getAttribute("border-color")! ;
-        }
-        this.element.style.borderColor = this.borderColor;
-
-        this.element.addEventListener("input", (event) => {
-            this.formatPhoneNumber(event.target as HTMLInputElement);
-        });
-    }
 }
